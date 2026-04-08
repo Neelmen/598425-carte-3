@@ -15,17 +15,22 @@ function getImageUrlFromPath(imagePath) {
 
 async function showCategory(category) {
     const container = document.getElementById("menu");
+    
+    // Si on clique sur la catégorie déjà ouverte, on ferme tout
     if (currentCategory === category) {
         closeMenuAnimation();
         return;
     }
+    
     currentCategory = category;
     container.innerHTML = "";
 
+    // Gestion de l'état actif des boutons
     document.querySelectorAll("#navigation button").forEach(btn => {
         btn.classList.toggle("active", btn.getAttribute('data-cat') === category);
     });
 
+    // Affiche le bouton retour car un menu est ouvert
     backButton.classList.remove("hidden");
 
     if (cache[category]) {
@@ -67,7 +72,6 @@ function displayCategory(grouped) {
                 ? "Inclus"
                 : `${dish.price} €`;
 
-            // NOUVELLE STRUCTURE : Image gauche, Texte droite
             card.innerHTML = `
                 <img src="${getImageUrlFromPath(dish.image_path)}" alt="${dish.name}">
                 <div class="card-text-wrapper">
@@ -81,7 +85,6 @@ function displayCategory(grouped) {
         container.appendChild(groupDiv);
     });
 
-    // Scroll doux vers le menu
     window.scrollTo({ top: container.offsetTop - 50, behavior: 'smooth' });
 }
 
@@ -91,7 +94,6 @@ function showDetail(dish) {
         : `${dish.price} €`;
 
     let extraContent = "";
-
     if (dish.description && dish.description.trim() !== "") {
         extraContent += `<p style="margin-top:20px;">${dish.description}</p>`;
     }
@@ -115,6 +117,8 @@ function showDetail(dish) {
     detail.classList.add("active");
     detail.classList.remove("hidden");
     document.body.classList.add("overlay-open");
+    
+    // S'assurer que le bouton retour est visible sur le détail
     backButton.classList.remove("hidden");
 }
 
@@ -122,25 +126,35 @@ function closeDetail() {
     detail.classList.remove("active");
     detail.classList.add("hidden");
     document.body.classList.remove("overlay-open");
+    
+    // CORRECTION : Si aucun menu n'est ouvert en arrière-plan, on cache le bouton retour
+    if (!currentCategory) {
+        backButton.classList.add("hidden");
+    }
 }
 
 function closeMenuAnimation() {
     currentCategory = null;
     document.getElementById("menu").innerHTML = "";
-    backButton.classList.add("hidden");
     document.querySelectorAll("#navigation button").forEach(btn => btn.classList.remove("active"));
+    
+    // Cache le bouton retour car on revient à l'accueil
+    backButton.classList.add("hidden");
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Logique du bouton Retour
 backButton.onclick = () => {
+    // Si un détail de plat est ouvert, on le ferme en priorité
     if (detail.classList.contains("active")) {
         closeDetail();
-    } else {
+    } 
+    // Sinon, si un menu est ouvert, on ferme le menu
+    else if (currentCategory) {
         closeMenuAnimation();
     }
 };
-
-// Effet de soulignement géré par CSS active class, suppression du ripple JS
 
 document.addEventListener("DOMContentLoaded", () => {
     const nav = document.getElementById("navigation");
