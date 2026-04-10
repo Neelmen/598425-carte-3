@@ -104,6 +104,7 @@ function showDetail(dish) {
         extraContent += `<p style="font-size:0.9rem; opacity:0.8; font-style:italic; margin-top:15px; border-top: 1px solid #e0dbd0; padding-top:10px;">${dish.ingredients}</p>`;
     }
 
+
     detail.innerHTML = `
         <div class="zoom-container" onclick="closeDetail()">
             <img src="${getImageUrlFromPath(dish.image_path)}" class="zoom-image">
@@ -114,6 +115,7 @@ function showDetail(dish) {
             </div>
         </div>
     `;
+    
     detail.classList.add("active");
     detail.classList.remove("hidden");
     document.body.classList.add("overlay-open");
@@ -149,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const labels = { 
         entree: "Entrées", 
         plat: "Plats", 
-        accompagnement: "Accompagnements", // Modifié ici
+        accompagnement: "Accompagnements",
         dessert: "Desserts", 
         boisson: "Boissons" 
     };
