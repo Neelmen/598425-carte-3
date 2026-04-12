@@ -379,31 +379,22 @@ h2 {
 }
 
 .stroke-animation {
-    stroke-dasharray: 150;
-    stroke-dashoffset: 0;
-    animation: stroke-spacing 1.5s ease-in-out infinite, stroke-color 4s linear infinite;
-    transform-origin: center;
-       transform-origin: 50% 50%;
+    stroke: #c06c4c;
+    stroke-dasharray: 126;
+    stroke-dashoffset: 126;
+    animation: dash 1.4s ease-in-out infinite;
+    transform-origin: 50% 50%;
 }
 
-/* animations */
-@keyframes stroke-spacing {
+@keyframes dash {
     0% {
-        stroke-dasharray: 0 200;
+        stroke-dashoffset: 126;
     }
-
-    45% {
-        stroke-dasharray: 200 200;
+    50% {
+        stroke-dashoffset: 30;
     }
-
-    90% {
-        stroke-dashoffset: -200;
-        stroke-dasharray: 200 200;
-    }
-
     100% {
-        stroke-dashoffset: -200;
-        stroke-dasharray: 200 200;
+        stroke-dashoffset: 126;
     }
 }
 
