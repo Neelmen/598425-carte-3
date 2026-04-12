@@ -379,11 +379,15 @@ h2 {
 }
 
 .stroke-animation {
+    fill: none;
     stroke: #c06c4c;
-    stroke-dasharray: 126;
-    stroke-dashoffset: 126;
-    animation: dash 1.4s ease-in-out infinite;
-    transform-origin: 50% 50%;
+    stroke-width: 3;
+    stroke-linecap: round;
+
+    stroke-dasharray: 120;
+    stroke-dashoffset: 120;
+
+    animation: dash 1.4s linear infinite;
 }
 
 @keyframes dash {
