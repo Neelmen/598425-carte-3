@@ -8,9 +8,13 @@ let currentCategory = null;
 const detail = document.getElementById("dish-detail");
 const backButton = document.getElementById("back-button");
 
+/**
+ * Gère l'affichage du bouton retour de manière centralisée
+ */
 function updateBackButton() {
     const isDetailOpen = detail.classList.contains("active");
     const isMenuOpen = currentCategory !== null;
+
     if (isDetailOpen || isMenuOpen) {
         backButton.classList.remove("hidden");
     } else {
@@ -33,7 +37,7 @@ async function showCategory(category) {
     
     currentCategory = category;
 
-    // 1. Affichage immédiat d'un loader global pour éviter l'effet "site bloqué"
+    // ÉTAPE 1 : Affichage immédiat d'un loader global pour confirmer l'action sur mauvaise connexion
     container.innerHTML = `
         <div id="global-loader" style="padding: 60px; display: flex; justify-content: center; width: 100%;">
             <div class="loader">
@@ -50,14 +54,14 @@ async function showCategory(category) {
 
     updateBackButton();
 
-    // 2. Récupération des données
+    // ÉTAPE 2 : Récupération des données (pendant que le loader global tourne)
     let groupedData;
     if (cache[category]) {
         groupedData = cache[category];
     } else {
         const { data, error } = await client.from("dishes").select("*").eq("category", category).eq("available", true);
         if (error) {
-            container.innerHTML = "<p>Erreur lors du chargement des données.</p>";
+            container.innerHTML = "<p>Erreur de chargement des données.</p>";
             return;
         }
         groupedData = data.reduce((acc, dish) => {
@@ -69,7 +73,7 @@ async function showCategory(category) {
         cache[category] = groupedData;
     }
 
-    // 3. Affichage de la structure du menu
+    // ÉTAPE 3 : Affichage immédiat de la structure (Titres + Cards avec loaders individuels)
     displayCategory(groupedData);
 }
 
@@ -89,7 +93,6 @@ function displayCategory(grouped) {
             const card = document.createElement("div");
             card.className = "card loading"; 
 
-            // On injecte le loader dans la carte
             card.innerHTML = `
                 <div class="loader">
                     <svg width="60" height="60">
@@ -100,7 +103,7 @@ function displayCategory(grouped) {
             `;
             groupDiv.appendChild(card);
 
-            // 4. Chargement de l'image en tâche de fond avec le délai forcé
+            // ÉTAPE 4 : Chargement des images en tâche de fond avec délai minimum forcé
             const img = new Image();
             const startTime = Date.now();
             const minDelay = 500 + (index * 150); 
@@ -125,7 +128,7 @@ function displayCategory(grouped) {
             };
 
             img.onload = revealCard;
-            img.onerror = revealCard; // Si l'image bug, on affiche quand même le texte
+            img.onerror = revealCard; 
             img.src = getImageUrlFromPath(dish.image_path);
             
             if (img.complete) {
@@ -188,7 +191,13 @@ backButton.onclick = () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const nav = document.getElementById("navigation");
-    const labels = { entree: "Entrées", plat: "Plats", accompagnement: "Accompagnements", dessert: "Desserts", boisson: "Boissons" };
+    const labels = { 
+        entree: "Entrées", 
+        plat: "Plats", 
+        accompagnement: "Accompagnements",
+        dessert: "Desserts", 
+        boisson: "Boissons" 
+    };
     Object.keys(labels).forEach(cat => {
         const btn = document.createElement("button");
         btn.textContent = labels[cat];
