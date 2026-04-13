@@ -4,6 +4,7 @@ const BUCKET_NAME = "dishes-images";
 const client = supabase.createClient(SUPABASE_URL, "sb_publishable_W0bTuLBKIo_-tSVK_XfKYg_LScZ_5EY");
 
 const cache = {};
+let zoomShineTimeout = null; // Pour stocker le timer de l'animation du zoom
 let currentCategory = null;
 const detail = document.getElementById("dish-detail");
 const backButton = document.getElementById("back-button");
@@ -142,12 +143,40 @@ function displayCategory(grouped) {
     window.scrollTo({ top: container.offsetTop - 50, behavior: 'smooth' });
 }
 
+/**
+ * GESTION DE L'ANIMATION ALÉATOIRE DU CADRE ZOOM
+ */
+function triggerZoomShine() {
+    const detail = document.getElementById("dish-detail");
+
+    // Si le détail n'est plus actif, on arrête tout
+    if (!detail.classList.contains("active")) return;
+
+    // On lance l'animation
+    detail.classList.add('animate-zoom-shine');
+
+    // On retire la classe après l'animation (2s) pour reset
+    setTimeout(() => {
+        detail.classList.remove('animate-zoom-shine');
+
+        // Si le détail est toujours ouvert, on planifie le prochain passage
+        if (detail.classList.contains("active")) {
+            // Calcul du prochain délai aléatoire entre 3 et 7 secondes (un peu plus long pour le zoom)
+            const nextShot = Math.floor(Math.random() * (7000 - 3000 + 1)) + 3000;
+            zoomShineTimeout = setTimeout(triggerZoomShine, nextShot);
+        }
+    }, 2000); // Durée de l'animation CSS
+}
+
 function showDetail(dish) {
     const displayPrice = (dish.price === 0 || dish.price === "0") ? "Inclus" : `${dish.price} €`;
     let extraContent = "";
     if (dish.description?.trim()) extraContent += `<p style="margin-top:20px;">${dish.description}</p>`;
-    if (dish.ingredients?.trim()) extraContent += `<p style="font-size:0.9rem; opacity:0.8; font-style:italic; margin-top:15px; border-top:1px solid #e0dbd0; padding-top:10px;">${dish.ingredients}</p>`;
+    if (dish.ingredients?.trim()) {
+        extraContent += `<p style="font-size:0.9rem; opacity:0.8; font-style:italic; margin-top:15px; border-top: 1px solid #e0dbd0; padding-top:10px;">${dish.ingredients}</p>`;
+    }
 
+    // MISE À JOUR : Structure pour inclure le reflet dans le container
     detail.innerHTML = `
         <div class="zoom-container" onclick="closeDetail()">
             <img src="${getImageUrlFromPath(dish.image_path)}" class="zoom-image">
@@ -158,16 +187,26 @@ function showDetail(dish) {
             </div>
         </div>
     `;
+
     detail.classList.add("active");
     detail.classList.remove("hidden");
     document.body.classList.add("overlay-open");
     updateBackButton();
+
+    // AJOUT : Lancement du cycle d'animation aléatoire
+    clearTimeout(zoomShineTimeout); // Sécurité : on annule un éventuel timer précédent
+    triggerZoomShine();
 }
 
 function closeDetail() {
     detail.classList.remove("active");
     detail.classList.add("hidden");
     document.body.classList.remove("overlay-open");
+
+    // AJOUT : Arrêt immédiat du cycle d'animation
+    clearTimeout(zoomShineTimeout);
+    detail.classList.remove('animate-zoom-shine'); // On retire la classe au cas où l'anim était en cours
+
     updateBackButton();
 }
 
