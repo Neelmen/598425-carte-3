@@ -156,7 +156,7 @@ h2 {
 }
 
 .card {
-    background: #fff;
+    background: transparent !important;
     width: 100%;
     cursor: pointer;
     border: none;
@@ -196,9 +196,12 @@ h2 {
 #dish-detail {
     position: fixed;
     inset: 0;
-    background-color: #fdfcf9;
+    background-color: #fff;
+    background-repeat: round;
+    background-size: 20% 100%;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url("images/pattern_page.png");
     z-index: 1500;
-    display: none; /* Caché par défaut */
+    display: none;
     flex-direction: column;
 }
 
