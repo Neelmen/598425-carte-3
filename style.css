@@ -39,8 +39,8 @@ body {
     position: relative;
     background-color: #fff;
     background-repeat: round;
-    background-size: 20% 100%;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url("images/pattern_page.png");
+    background-size: 40% 100%;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)), url("images/pattern_page.png");
     width: min(750px, 100%);
     border-radius: 4px;
     padding: 60px 20px;
